@@ -1,0 +1,26 @@
+From: Anton Matveenko <antmat@me.com>
+Date: Mon, 27 May 2013 20:12:33 +0200
+Subject: Change port from default in tests in order to keep working environment if there is one
+
+
+-
+--- a/test.c	2013-05-27 20:10:02.000000000 +0700
++++ b/test.c	2013-05-27 20:08:32.000000000 +0700
+@@ -266,7 +266,7 @@
+     redisContext *c;
+ 
+     test("Returns error when host cannot be resolved: ");
+-    c = redisConnect((char*)"idontexist.local", 6379);
++    c = redisConnect((char*)"idontexist.local", 16379);
+     test_cond(c->err == REDIS_ERR_OTHER &&
+         strcmp(c->errstr,"Can't resolve: idontexist.local") == 0);
+     redisFree(c);
+@@ -580,7 +580,7 @@
+     struct config cfg = {
+         .tcp = {
+             .host = "127.0.0.1",
+-            .port = 6379
++            .port = 16379
+         },
+         .unix = {
+             .path = "/tmp/redis.sock"

@@ -1,0 +1,28 @@
+#!/usr/bin/make -f
+#export DH_VERBOSE=1
+
+REDIS   = $(shell [ -e /usr/bin/redis-server ] && echo 1 || echo 0)
+
+CFLAGS  = $(shell dpkg-buildflags --get CFLAGS)
+CFLAGS += $(shell dpkg-buildflags --get CPPFLAGS)
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	dh_auto_build -- DEBUG="-g" CFLAGS="$(CFLAGS)" 
+
+override_dh_installchangelogs:
+	dh_installchangelogs CHANGELOG.md
+
+override_dh_auto_test:
+ifeq ($(REDIS), 1)
+	redis-server ./debian/redis-test.conf
+	dh_auto_test
+	kill `cat /tmp/redis.pid`
+	$(RM) /tmp/redis.pid
+	$(RM) /tmp/redis.sock
+endif
+
+override_dh_strip:
+	dh_strip --dbg-package=libhiredis-dbg
