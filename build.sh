@@ -15,8 +15,15 @@ then
 else
 	CHANGELOG="Building from source"
 fi
+set +e #uscan returns 1 when new repo is found 0 otherwise
 uscan $USCAN_OPTS
+set -e
 CNT=`ls ../*orig.tar.gz | wc -l`
+if [ "$CNT" -eq "0" ]
+then 
+	echo "No orig.tar.gz. Seems that uscan failed."
+	exit 1
+fi
 if [ "$CNT" -gt "1" ]
 then 
 	echo "ambigous orig.tar.gz. Please delete all orig.tar.gz.archives and rerun build"
